@@ -1,44 +1,47 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 export function initScene({ minDistance = 100, maxDistance = 500, fov = 100 }) {
-	const scene = new THREE.Scene();
-	const camera = new THREE.PerspectiveCamera(
-		fov,
-		//시야각
-		window.innerWidth / window.innerHeight,
-		0.1,
-		1000
-	);
-	let renderer = new THREE.WebGLRenderer({
-		canvas: document.querySelector('#canvas'),
-		antialias: true
-	});
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    fov,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  let renderer = new THREE.WebGLRenderer({
+    canvas: document.querySelector("#canvas"),
+    antialias: true,
+  });
 
-	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
-	const controls = new OrbitControls(camera, renderer.domElement);
-	// controls.minPolarAngle = 0;
-	// controls.maxPolarAngle = Math.PI / 2;
-	controls.minDistance = minDistance;
-	controls.maxDistance = maxDistance;
+  // 배경색을 fafafa로 설정합니다.
+  renderer.setClearColor(new THREE.Color("#fffaff"));
 
-	const loader = new THREE.CubeTextureLoader();
-	const texture = loader.load([
-		'model/skybox/skybox_right.png',
-		'model/skybox/skybox_left.png',
-		'model/skybox/skybox_up.png',
-		'model/skybox/skybox_down.png',
-		'model/skybox/skybox_front.png',
-		'model/skybox/skybox_back.png'
-	]);
-	scene.background = texture;
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.minDistance = minDistance;
+  controls.maxDistance = maxDistance;
 
-	const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-	const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-	directionalLight.position.set(1, 1, 1).normalize();
-	scene.add(directionalLight);
-	scene.add(ambientLight);
-	return { scene, camera, renderer, controls };
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.92);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+
+  scene.add(directionalLight);
+  scene.add(ambientLight);
+
+  directionalLight.castShadow = true;
+  directionalLight.position.set(1, 20, 5).normalize();
+
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // PCFSoftShadowMap는 그림자를 더 부드럽게
+  let plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(500, 500),
+    new THREE.MeshPhongMaterial({ color: 0xfffaff, shininess: 10 })
+  );
+  plane.rotation.x = -Math.PI / 2; // -90 degrees
+  plane.position.y = 0.051;
+  plane.receiveShadow = true;
+  scene.add(plane);
+
+  return { scene, camera, renderer, controls };
 }

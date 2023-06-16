@@ -131,7 +131,16 @@
     (async () => {
       try {
         loafer = await loadGLTFModel("/model/loafer/Loafers.glb", scene);
+        loafer.position.x += 0.1;
+        loafer.position.y += 0.1;
+        loafer.rotation.x = 0.2;
+
+        loafer.castShadow = true;
         loafer.traverse(function (child) {
+          if (child instanceof THREE.Mesh) {
+            child.castShadow = true;
+          }
+
           if (child.material && child.material.color) {
             child.userData.originalMaterial = child.material;
 
@@ -148,21 +157,31 @@
           }
         });
         loaferData.set(loafer);
+        const box = new THREE.Box3().setFromObject(loafer);
+        const center = box.getCenter(new THREE.Vector3());
+        controls.target.copy(center);
+        controls.update();
       } catch (error) {
         console.error("Failed to load glb model: ", error);
       }
     })();
 
-    window.addEventListener(
-      "resize",
-      () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+    const canvas = document.querySelector("#canvas");
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      },
-      false
-    );
+    function resizeCanvas() {
+      const choiceSection = document.querySelector(".pallete");
+      const height = window.innerHeight - choiceSection.offsetHeight;
+      const width = window.innerWidth;
+      canvas.style.height = `${height}px`;
+      canvas.style.width = `${width}px`;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
+    }
+    window.addEventListener("resize", resizeCanvas, false);
+    resizeCanvas();
 
     function onMouseClick(event) {
       // 드래그 중인 경우에는 클릭 이벤트를 처리하지 않음
@@ -170,7 +189,7 @@
         return;
       }
 
-      if (event.clientX > (window.innerWidth * 2) / 3) {
+      if (event.clientY > window.innerHeight - 224) {
         return;
       }
       let raycaster = new THREE.Raycaster();
@@ -212,7 +231,7 @@
 
     document.body.appendChild(renderer.domElement); // 렌더러를 DOM에 추가
 
-    camera.position.set(4, 10, 5);
+    camera.position.set(4, 8, 5);
     camera.lookAt(0, 0, 0);
 
     function animate() {

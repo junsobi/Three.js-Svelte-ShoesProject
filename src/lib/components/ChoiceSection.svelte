@@ -4,12 +4,10 @@
   import ControlBox from "./ControlBox.svelte";
 </script>
 
-<div
-  class=" z-50 w-full h-full bg-gray-700 bg-opacity-20 backdrop-blur choiceSection"
->
+<div class=" z-50 w-full h-full bg-white choiceSection">
   <ChosenPart />
   <ColorMaterialChoice />
-  <ControlBox />
+  <!-- <ControlBox /> -->
 </div>
 
 <style>
