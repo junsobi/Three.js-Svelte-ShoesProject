@@ -161,6 +161,9 @@
         const center = box.getCenter(new THREE.Vector3());
         controls.target.copy(center);
         controls.update();
+
+        window.addEventListener("click", onMouseClick, false);
+        //정확한 클릭을 위해 로퍼모델이 로드되고 위치조정된뒤에 등록
       } catch (error) {
         console.error("Failed to load glb model: ", error);
       }
@@ -195,14 +198,18 @@
       let raycaster = new THREE.Raycaster();
       let mouse = new THREE.Vector2();
 
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      let canvasBounds = canvas.getBoundingClientRect();
+
+      mouse.x =
+        ((event.clientX - canvasBounds.left) / canvasBounds.width) * 2 - 1;
+      mouse.y =
+        -((event.clientY - canvasBounds.top) / canvasBounds.height) * 2 + 1;
 
       raycaster.setFromCamera(mouse, camera);
 
       let intersects = raycaster.intersectObjects(scene.children, true);
 
-      if (intersects.length > 0) {
+      if (intersects.length > 1) {
         let firstIntersection = intersects[0];
         let selectedObject = firstIntersection.object;
 
@@ -227,8 +234,6 @@
       }
     }
 
-    window.addEventListener("click", onMouseClick, false);
-
     document.body.appendChild(renderer.domElement); // 렌더러를 DOM에 추가
 
     camera.position.set(4, 8, 5);
@@ -236,7 +241,7 @@
 
     function animate() {
       requestAnimationFrame(animate);
-
+      controls.update(); // for damping
       renderer.render(scene, camera);
     }
     animate();
