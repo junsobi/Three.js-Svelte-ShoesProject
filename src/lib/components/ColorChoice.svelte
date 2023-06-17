@@ -2,37 +2,46 @@
   import colors from "./COLORS";
   import ArrowBox from "./ArrowBox.svelte";
   import { selectedObjectName, selectedColor } from "$lib/store/store";
-  let hoveredColor = null;
+  let startX, scrollLeft;
+  let carousel;
+  let isDown = false;
 
-  function handleMouseOver(color) {
-    hoveredColor = color;
+  function startDrag(e) {
+    isDown = true;
+    startX = e.pageX - carousel.offsetLeft;
+    scrollLeft = carousel.scrollLeft;
   }
 
-  function handleMouseOut() {
-    hoveredColor = null;
+  function drag(e) {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - carousel.offsetLeft;
+    const scroll = x - startX;
+    carousel.scrollLeft = scrollLeft - scroll;
+  }
+
+  function stopDrag(e) {
+    isDown = false;
   }
 </script>
 
-<div class="pb-3 text-xl font-bold text-white">Color</div>
-<div class="flex flex-wrap justify-start w-full">
+<div
+  bind:this={carousel}
+  on:mousedown={startDrag}
+  on:mousemove={drag}
+  on:mouseup={stopDrag}
+  on:mouseleave={stopDrag}
+  class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4"
+>
   {#each colors as color}
     <button
-      class="relative color-container m-1"
-      on:mouseover={() => handleMouseOver(color)}
-      on:focus={() => handleMouseOver(color)}
-      on:mouseout={handleMouseOut}
-      on:blur={handleMouseOut}
+      class=" color-container m-3"
       on:click={() => $selectedObjectName && selectedColor.set(color.code)}
     >
       <div
-        class="w-14 h-14 rounded-full"
+        class="w-10 h-10 rounded-full border border-gray-500"
         style="background-color: #{color.code}"
       />
-      {#if hoveredColor === color}
-        <div class="arrowBox">
-          <ArrowBox text={color.name} />
-        </div>
-      {/if}
     </button>
   {/each}
 </div>

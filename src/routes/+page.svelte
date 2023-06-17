@@ -6,8 +6,8 @@
 
 <div class="title">WAGKI</div>
 <Loafers />
-<div class="pallete">
-  <div class="w-screen h-56"><ChoiceSection /></div>
+<div class="pallete w-full h-56">
+  <ChoiceSection />
 </div>
 
 <style>

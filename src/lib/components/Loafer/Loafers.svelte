@@ -188,9 +188,9 @@
 
     function onMouseClick(event) {
       // 드래그 중인 경우에는 클릭 이벤트를 처리하지 않음
-      if (controls.isDragging) {
-        return;
-      }
+      // if (controls.isDragging) {
+      //   return;
+      // }
 
       if (event.clientY > window.innerHeight - 224) {
         return;

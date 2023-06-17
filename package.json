@@ -26,6 +26,8 @@
 	"type": "module",
 	"dependencies": {
 		"@types/three": "^0.152.1",
+		"svelte-swiper": "^1.0.1",
+		"swiper": "^9.4.1",
 		"three": "^0.153.0",
 		"three-gltf-loader": "^1.111.0"
 	}

@@ -1,38 +1,61 @@
 <script>
   import materials from "./MATERIALS";
-  import ArrowBox from "./ArrowBox.svelte";
-  import { selectedObjectName, selectedMaterial } from "$lib/store/store";
-  let hoveredMaterial = null;
 
-  function handleMouseOver(material) {
-    hoveredMaterial = material;
+  import { selectedObjectName, selectedMaterial } from "$lib/store/store";
+  let startX, scrollLeft;
+  let carousel;
+  let isDown = false;
+
+  function startDrag(e) {
+    isDown = true;
+    startX = e.pageX - carousel.offsetLeft;
+    scrollLeft = carousel.scrollLeft;
   }
 
-  function handleMouseOut() {
-    hoveredMaterial = null;
+  function drag(e) {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - carousel.offsetLeft;
+    const scroll = x - startX;
+    carousel.scrollLeft = scrollLeft - scroll;
+  }
+
+  function stopDrag(e) {
+    isDown = false;
   }
 </script>
 
-<div class="pb-3 text-xl font-bold text-white">Material</div>
-<div class="flex flex-wrap justify-start w-full">
+<div
+  bind:this={carousel}
+  on:mousedown={startDrag}
+  on:mousemove={drag}
+  on:mouseup={stopDrag}
+  on:mouseleave={stopDrag}
+  class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4 pb-5"
+>
   {#each materials as material}
     <button
-      class="relative m-1"
-      on:mouseover={() => handleMouseOver(material)}
-      on:focus={() => handleMouseOver(material)}
-      on:mouseout={handleMouseOut}
-      on:blur={handleMouseOut}
+      class="material-button m-1 flex items-center justify-center text-sm"
+      style="background-image: url({material.image});"
       on:click={() =>
         $selectedObjectName && selectedMaterial.set(material.name)}
     >
-      <img
-        class="w-14 h-14 rounded-full"
-        src={material.image}
-        alt={material.name}
-      />
-      {#if hoveredMaterial === material}
-        <ArrowBox text={material.name} />
-      {/if}
+      <p class="text-white">{material.alt}</p>
     </button>
   {/each}
 </div>
+
+<style>
+  .material-button {
+    width: 152px;
+    height: 36px;
+    border-radius: 18px;
+    background-color: rgba(0, 0, 0, 0.3);
+    background-blend-mode: multiply;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+</style>

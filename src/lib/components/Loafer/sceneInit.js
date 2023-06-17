@@ -42,8 +42,8 @@ export function initScene({ minDistance = 100, maxDistance = 500, fov = 100 }) {
   plane.position.y = 0.051;
   plane.receiveShadow = true;
   scene.add(plane);
-  // controls.enableDamping = true;
-  // controls.dampingFactor = 0.1;
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.3;
 
   return { scene, camera, renderer, controls };
 }
