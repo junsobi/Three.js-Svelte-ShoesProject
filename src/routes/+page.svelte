@@ -7,6 +7,7 @@
   import PaymentModal from "$lib/components/PaymentModal.svelte";
   import SavingModal from "$lib/components/SavingModal.svelte";
 
+  let isExpanded = true;
   let totalParts = 0;
   let completedParts = 0;
   let incompleteParts = [];
@@ -18,6 +19,9 @@
   function openModal(type) {
     modalType = type;
     showModal = true;
+  }
+  function handleToggleExpand() {
+    isExpanded = !isExpanded;
   }
 
   finalParts.subscribe((value) => {
@@ -55,8 +59,8 @@
 >
 
 <Loafers />
-<div class="pallete w-full h-56">
-  <ChoiceSection />
+<div class="pallete w-full" class:expanded={isExpanded}>
+  <ChoiceSection on:toggleExpand={handleToggleExpand} />
 </div>
 
 <style>
@@ -65,14 +69,27 @@
     top: 4%;
     left: 4%;
     color: #2b2b2b;
-    font-size: 48px;
-    letter-spacing: 48px;
+    font-size: 24px; /* 일반적인 화면 크기를 위한 기본 font-size 설정 */
+    letter-spacing: 24px;
     text-shadow: 8px 8px 8px rgba(0, 0, 0, 0.5);
   }
 
+  /* md 사이즈 이상의 화면 크기에 대한 미디어 쿼리 */
+  @media screen and (min-width: 768px) {
+    .title {
+      font-size: 48px; /* md 사이즈 이상일 때의 font-size 설정 */
+      letter-spacing: 48px;
+    }
+  }
+
   .pallete {
+    height: 80px;
     position: fixed;
     bottom: 0;
     z-index: 1;
+    transition: height 0.5s ease-in-out;
+  }
+  .pallete.expanded {
+    height: 224px;
   }
 </style>

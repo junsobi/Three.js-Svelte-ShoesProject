@@ -7,6 +7,7 @@ export const selectedMaterial = writable(null);
 export const hoverPart = writable("");
 
 export const orderProgress = writable([]);
+export const backOrderProgress = writable([]);
 
 export const initialParts = writable({
   Leather: { texture: null, color: null },

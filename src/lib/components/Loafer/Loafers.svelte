@@ -31,6 +31,21 @@
   let scene, camera, renderer, loafer, controls;
   let highlightMaterial = null;
   const highlightColor = new THREE.Color("#00FF00");
+  let hoverTimeout;
+
+  $: {
+    if (loafer && $selectedObjectName) {
+      hoverPart.set($selectedObjectName);
+
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+
+      hoverTimeout = setTimeout(() => {
+        hoverPart.set("");
+      }, 1600);
+    }
+  }
 
   $: {
     function applyHighlight() {
@@ -58,8 +73,20 @@
     applyHighlight();
   }
 
+  function updateOrderProgress(type, objectName, oldValue, newValue) {
+    orderProgress.update((progress) => [
+      ...progress,
+      {
+        type: type,
+        objectName: objectName,
+        oldValue: oldValue,
+        newValue: newValue,
+      },
+    ]);
+  }
+
   $: {
-    if (loafer && $selectedColor) {
+    if (loafer && $selectedColor && !$hoverPart) {
       let oldValue = getOldColorFromObject(loafer, $selectedObjectName);
       applyColorToObject(loafer, $selectedColor, $selectedObjectName);
       resetHighlightMaterial(loafer);
@@ -74,15 +101,12 @@
         };
       });
 
-      orderProgress.update((progress) => [
-        ...progress,
-        {
-          type: "color",
-          objectName: $selectedObjectName,
-          oldValue: oldValue,
-          newValue: $selectedColor,
-        },
-      ]);
+      updateOrderProgress(
+        "color",
+        $selectedObjectName,
+        oldValue,
+        $selectedColor
+      );
     }
   }
 
@@ -106,15 +130,12 @@
           };
         });
 
-        orderProgress.update((progress) => [
-          ...progress,
-          {
-            type: "texture",
-            objectName: $selectedObjectName,
-            oldValue: oldValue,
-            newValue: $selectedMaterial,
-          },
-        ]);
+        updateOrderProgress(
+          "texture",
+          $selectedObjectName,
+          oldValue,
+          $selectedMaterial
+        );
       }
     }
   }
@@ -170,9 +191,9 @@
     })();
 
     const canvas = document.querySelector("#canvas");
+    const choiceSection = document.querySelector(".pallete");
 
     function resizeCanvas() {
-      const choiceSection = document.querySelector(".pallete");
       const height = window.innerHeight - choiceSection.offsetHeight;
       const width = window.innerWidth;
       canvas.style.height = `${height}px`;
@@ -185,16 +206,23 @@
     }
     window.addEventListener("resize", resizeCanvas, false);
     resizeCanvas();
-
+    const resizeObserver = new ResizeObserver(() => {
+      // pallete의 크기가 바뀔 때마다 resizeCanvas 함수를 호출
+      resizeCanvas();
+    });
+    resizeObserver.observe(choiceSection);
     function onMouseClick(event) {
       // 드래그 중인 경우에는 클릭 이벤트를 처리하지 않음
-      // if (controls.isDragging) {
-      //   return;
-      // }
+      if (controls.isDragging) {
+        return;
+      }
 
-      // if (event.clientY > window.innerHeight - 224) {
-      //   return;
-      // }
+      const canvasHeight = canvas.offsetHeight;
+
+      if (event.clientY > canvasHeight) {
+        return;
+      }
+
       let raycaster = new THREE.Raycaster();
       let mouse = new THREE.Vector2();
 
@@ -228,6 +256,14 @@
               selectedObjectName.set(objectNameToSelect);
               selectedColor.set("");
               selectedMaterial.set("");
+
+              hoverPart.set(objectNameToSelect);
+              if (hoverTimeout) {
+                clearTimeout(hoverTimeout);
+              }
+              hoverTimeout = setTimeout(() => {
+                hoverPart.set("");
+              }, 1600);
             }
           }
         }

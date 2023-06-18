@@ -1,4 +1,4 @@
-<script>
+	<script>
   import { orderProgress, finalParts, initialParts } from "$lib/store/store";
   import { undoLastChange } from "./Loafer/undoFunctions";
   import PaymentModal from "./PaymentModal.svelte";

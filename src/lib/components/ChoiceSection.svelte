@@ -4,10 +4,18 @@
   import ColorMaterialChoice from "./ColorMaterialChoice.svelte";
   import ControlBox from "./ControlBox.svelte";
   import MaterialChoice from "./MaterialChoice.svelte";
+  import { createEventDispatcher } from "svelte";
+  import ChoosenPart from "./ChosenPart.svelte";
+
+  const dispatch = createEventDispatcher();
+
+  function handleToggleExpand() {
+    dispatch("toggleExpand");
+  }
 </script>
 
 <div class=" z-50 w-full h-full bg-white choiceSection">
-  <ChosenPart />
+  <ChosenPart on:toggleExpand={handleToggleExpand} />
   <MaterialChoice />
   <ColorChoice />
   <!-- <ControlBox /> -->

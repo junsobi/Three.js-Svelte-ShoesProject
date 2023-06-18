@@ -1,5 +1,5 @@
 <script>
-  import { onMount, onDestroy } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import {
     hoverPart,
     selectedColor,
@@ -8,11 +8,16 @@
     finalParts,
   } from "$lib/store/store";
   import ChangeableParts from "./ChangeableParts.svelte";
+  import { undoLastChange, redoLastChange } from "./Loafer/undoFunctions";
+
+  const dispatch = createEventDispatcher();
   let showModal = false;
   let parts = {};
   let selectedAltName = "";
   let selectedObjectIndex = 0;
   let partsOrder = [];
+  let isExpanded = true;
+  let iconSrc = "/icon/down-arrow.svg";
 
   finalParts.subscribe((value) => {
     parts = value;
@@ -44,26 +49,58 @@
       hoverPart.set("");
     }, 1600); // 2000ms 뒤에 hoverPart를 초기화
   }
+
+  function toggleExpand() {
+    isExpanded = !isExpanded;
+    dispatch("toggleExpand");
+  }
+
+  $: {
+    iconSrc = isExpanded ? "/icon/down-arrow.svg" : "/icon/up-arrow.svg";
+  }
 </script>
 
 <div
-  class="flex w-full gap-28 p-5 text-lg justify-center items-center text-black chosenContainer"
+  class="flex w-full md:p-5 p-1 text-lg justify-between items-center text-black chosenContainer"
 >
-  <button on:click={() => switchPartAndHover("left")}
-    ><img class="w-6" src="/icon/left-arrow.svg" alt="왼쪽" /></button
-  >
-  <div class="flex gap-8">
-    <div class="w-20 text-center">
-      {selectedAltName}
-    </div>
-    <p class="text-base text-gray-400">
-      {selectedObjectIndex + 1}/{partsOrder.length}
-    </p>
+  <div class="flex md:gap-24 gap-4 w-2/6 md:w-1/4 controlButton">
+    <button
+      on:click={undoLastChange}
+      class="w-9 h-9 rounded-full border-2 border-grey-500 button"
+    >
+      <img class="w-6 mx-auto" src="/icon/undo.png" alt="취소" />
+    </button>
+    <button
+      on:click={redoLastChange}
+      class="w-9 h-9 rounded-full border-2 border-grey-500 button"
+    >
+      <img class="w-6 mx-auto" src="/icon/redo.png" alt="취소" />
+    </button>
   </div>
-  <button on:click={() => switchPartAndHover("right")}
-    ><img class="w-6" src="/icon/right-arrow.svg" alt="오른쪽" /></button
+  <div
+    class="flex justify-between md:w-auto w-3/6 gap-4 md:gap-48 directionControl"
   >
+    <button on:click={() => switchPartAndHover("left")}>
+      <img class="w-6" src="/icon/left-arrow.svg" alt="왼쪽" />
+    </button>
+    <div class="flex gap-1 md:gap-8">
+      <div class="text-center md:text-lg text-sm">
+        {selectedAltName}
+      </div>
+      <p class="md:text-base text-xs text-center text-gray-400">
+        {selectedObjectIndex + 1}/{partsOrder.length}
+      </p>
+    </div>
+    <button on:click={() => switchPartAndHover("right")}>
+      <img class="w-6" src="/icon/right-arrow.svg" alt="오른쪽" />
+    </button>
+  </div>
+  <div class="flex md:gap-24 gap-8 md:w-1/4 w-1/6 justify-end sizeControl">
+    <button
+      on:click={toggleExpand}
+      class="w-9 h-9 rounded-full border-2 border-grey-500 button"
+    >
+      <img class="w-4 mx-auto" src={iconSrc} alt="축소" />
+    </button>
+  </div>
 </div>
-
-<style>
-</style>
