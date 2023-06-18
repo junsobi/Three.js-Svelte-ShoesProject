@@ -192,9 +192,9 @@
       //   return;
       // }
 
-      if (event.clientY > window.innerHeight - 224) {
-        return;
-      }
+      // if (event.clientY > window.innerHeight - 224) {
+      //   return;
+      // }
       let raycaster = new THREE.Raycaster();
       let mouse = new THREE.Vector2();
 

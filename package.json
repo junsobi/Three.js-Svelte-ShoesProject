@@ -25,7 +25,9 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tweenjs/tween.js": "^20.0.3",
 		"@types/three": "^0.152.1",
+		"gsap": "^3.12.1",
 		"svelte-swiper": "^1.0.1",
 		"swiper": "^9.4.1",
 		"three": "^0.153.0",

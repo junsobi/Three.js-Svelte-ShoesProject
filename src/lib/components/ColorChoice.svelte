@@ -1,7 +1,28 @@
 <script>
   import colors from "./COLORS";
-  import ArrowBox from "./ArrowBox.svelte";
-  import { selectedObjectName, selectedColor } from "$lib/store/store";
+  import {
+    selectedObjectName,
+    selectedColor,
+    initialParts,
+    finalParts,
+  } from "$lib/store/store";
+
+  let part;
+  let initColor;
+  let finalColor;
+  $: {
+    console.log(finalColor);
+  }
+  $: {
+    part = $selectedObjectName;
+    if (part in $initialParts && $initialParts[part].color !== undefined) {
+      initColor = $initialParts[part].color;
+    }
+    if (part in $finalParts && $finalParts[part].color !== undefined) {
+      finalColor = $finalParts[part].color;
+    }
+  }
+
   let startX, scrollLeft;
   let carousel;
   let isDown = false;
@@ -31,17 +52,51 @@
   on:mousemove={drag}
   on:mouseup={stopDrag}
   on:mouseleave={stopDrag}
-  class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4"
+  class="flex flex-nowrap lg:justify-center w-full pb-10 overflow-x-auto px-4 carousel"
 >
-  {#each colors as color}
+  <div class="color-container m-3 relative">
     <button
-      class=" color-container m-3"
-      on:click={() => $selectedObjectName && selectedColor.set(color.code)}
+      on:click={() => $selectedObjectName && selectedColor.set(initColor)}
     >
       <div
-        class="w-10 h-10 rounded-full border border-gray-500"
-        style="background-color: #{color.code}"
+        class="w-8 h-8 rounded-full border border-gray-500"
+        style="background-color: #{initColor}"
       />
+      {#if finalColor === null || finalColor === initColor}
+        <div
+          class="ring-2 ring-gray-500 absolute top-0 left-0 w-8 h-8 rounded-full"
+        />
+        <p class="pt-2 text-xs text-gray-600 absolute w-full text-center">
+          Default
+        </p>
+      {/if}
     </button>
+  </div>
+
+  {#each colors as color}
+    <div class="color-container m-3 relative">
+      <button
+        on:click={() => $selectedObjectName && selectedColor.set(color.code)}
+      >
+        <div
+          class="w-8 h-8 rounded-full border border-gray-500"
+          style="background-color: #{color.code}"
+        />
+      </button>
+      {#if finalColor === color.code}
+        <div
+          class="ring-2 ring-gray-500 absolute top-0 left-0 w-8 h-8 rounded-full"
+        />
+        <p class="text-xs text-gray-600 absolute w-full text-center">
+          {color.name}
+        </p>
+      {/if}
+    </div>
   {/each}
 </div>
+
+<style>
+  .carousel {
+    scroll-behavior: smooth;
+  }
+</style>

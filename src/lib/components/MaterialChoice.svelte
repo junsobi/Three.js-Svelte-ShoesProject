@@ -31,7 +31,7 @@
   on:mousemove={drag}
   on:mouseup={stopDrag}
   on:mouseleave={stopDrag}
-  class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4 pb-5"
+  class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4 pb-5 carousel"
 >
   {#each materials as material}
     <button
@@ -46,6 +46,9 @@
 </div>
 
 <style>
+  .carousel {
+    scroll-behavior: smooth;
+  }
   .material-button {
     width: 152px;
     height: 36px;
