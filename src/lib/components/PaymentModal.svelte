@@ -20,12 +20,14 @@
   class="fixed z-50 left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50 py-3"
 >
   <div
-    class="max-h-full w-full max-w-xl overflow-y-auto sm:rounded-2xl bg-white"
+    class="max-h-full w-11/12 rounded-lg max-w-xl overflow-y-auto sm:rounded-2xl bg-white"
   >
     <div class="w-full">
       <div class="m-8 my-10 max-w-[400px] mx-auto">
         <div class="mb-2">
-          <h1 class="mb-4 text-3xl font-extrabold">이대로 구매하시겠습니까?</h1>
+          <h1 class="mb-4 pl-3 text-3xl font-extrabold">
+            이대로 구매하시겠습니까?
+          </h1>
           <p class="text-gray-600 pl-4">당신만을 위한 신발이 준비되었습니다!</p>
         </div>
         <table class="w-full mb-5">
@@ -65,7 +67,7 @@
             {/each}
           </tbody>
         </table>
-        <div class="space-y-4">
+        <div class="space-y-4 px-4">
           <button
             class="p-3 bg-white border rounded-full w-full font-semibold"
             on:click={close}>조금 더 고르기</button

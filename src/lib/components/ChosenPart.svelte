@@ -63,7 +63,7 @@
 <div
   class="flex w-full md:p-5 p-1 text-lg justify-between items-center text-black chosenContainer"
 >
-  <div class="flex pl-4 md:gap-24 gap-4 w-2/6 md:w-1/4 controlButton">
+  <div class="flex pl-2 md:gap-24 gap-4 w-2/6 md:w-1/4 controlButton">
     <button
       on:click={undoLastChange}
       class="w-9 h-9 rounded-full border-2 border-grey-500 button"
@@ -85,7 +85,9 @@
     </button>
 
     <div class="flex items-center gap-8">
-      <div class="text-center md:text-lg text-m">
+      <div
+        class="text-center md:text-lg text-sm whitespace-nowrap overflow-visible"
+      >
         {selectedAltName}
       </div>
       <p class="md:text-base text-sm text-center text-gray-400">
@@ -97,7 +99,7 @@
     </button>
   </div>
 
-  <div class="flex pr-4 md:gap-24 gap-8 md:w-1/4 w-1/6 justify-end sizeControl">
+  <div class="flex pr-2 md:gap-24 gap-8 md:w-1/4 w-1/6 justify-end sizeControl">
     <button
       on:click={toggleExpand}
       class="w-9 h-9 rounded-full border-2 border-grey-500 button"

@@ -37,6 +37,11 @@ const MATERIALS = [
   },
   { name: "Suede", image: "/images/leather6.png", alt: "스웨이드" }
 ];
+const ChosenPart_svelte_svelte_type_style_lang = "";
+const css$4 = {
+  code: ".chosenContainer.svelte-7gi1u5{height:72px}",
+  map: null
+};
 const ChosenPart = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   createEventDispatcher();
   let parts = {};
@@ -52,18 +57,22 @@ const ChosenPart = create_ssr_component(($$result, $$props, $$bindings, slots) =
     selectedAltName = parts[value]?.alt || "";
     selectedObjectIndex = partsOrder.indexOf(value);
   });
+  $$result.css.add(css$4);
   {
     {
       iconSrc = "/icon/down-arrow.svg";
     }
   }
-  return `<div class="flex w-full md:p-5 p-1 text-lg justify-between items-center text-black chosenContainer"><div class="flex md:gap-24 gap-4 w-2/6 md:w-1/4 controlButton"><button class="w-9 h-9 rounded-full border-2 border-grey-500 button"><img class="w-6 mx-auto" src="/icon/undo.png" alt="취소"></button>
+  return `<div class="flex w-full md:p-5 p-1 text-lg justify-between items-center text-black chosenContainer svelte-7gi1u5"><div class="flex pl-2 md:gap-24 gap-4 w-2/6 md:w-1/4 controlButton"><button class="w-9 h-9 rounded-full border-2 border-grey-500 button"><img class="w-6 mx-auto" src="/icon/undo.png" alt="취소"></button>
     <button class="w-9 h-9 rounded-full border-2 border-grey-500 button"><img class="w-6 mx-auto" src="/icon/redo.png" alt="취소"></button></div>
   <div class="flex justify-between md:w-auto w-3/6 gap-4 md:gap-48 directionControl"><button><img class="w-6" src="/icon/left-arrow.svg" alt="왼쪽"></button>
-    <div class="flex gap-1 md:gap-8"><div class="text-center md:text-lg text-sm">${escape(selectedAltName)}</div>
-      <p class="md:text-base text-xs text-center text-gray-400">${escape(selectedObjectIndex + 1)}/${escape(partsOrder.length)}</p></div>
+
+    <div class="flex items-center gap-8"><div class="text-center md:text-lg text-sm whitespace-nowrap overflow-visible">${escape(selectedAltName)}</div>
+      <p class="md:text-base text-sm text-center text-gray-400">${escape(selectedObjectIndex + 1)}/${escape(partsOrder.length)}</p></div>
     <button><img class="w-6" src="/icon/right-arrow.svg" alt="오른쪽"></button></div>
-  <div class="flex md:gap-24 gap-8 md:w-1/4 w-1/6 justify-end sizeControl"><button class="w-9 h-9 rounded-full border-2 border-grey-500 button"><img class="w-4 mx-auto"${add_attribute("src", iconSrc, 0)} alt="축소"></button></div></div>`;
+
+  <div class="flex pr-2 md:gap-24 gap-8 md:w-1/4 w-1/6 justify-end sizeControl"><button class="w-9 h-9 rounded-full border-2 border-grey-500 button"><img class="w-4 mx-auto"${add_attribute("src", iconSrc, 0)} alt="축소"></button></div>
+</div>`;
 });
 const colors = [
   { name: "Black", code: "000" },
@@ -119,15 +128,15 @@ const ColorChoice = create_ssr_component(($$result, $$props, $$bindings, slots) 
   $$unsubscribe_finalParts();
   $$unsubscribe_initialParts();
   $$unsubscribe_selectedObjectName();
-  return `<div class="flex flex-nowrap lg:justify-center w-full pb-10 overflow-x-auto px-4 carousel svelte-gri0eo"${add_attribute("this", carousel, 0)}><div class="color-container m-3 relative"><button><div class="w-8 h-8 rounded-full border border-gray-500" style="${"background-color: #" + escape(initColor, true)}"></div>
+  return `<div class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4 carousel svelte-gri0eo"${add_attribute("this", carousel, 0)}><div class="color-container m-3 relative"><button><div class="w-8 h-8 mb-3 rounded-full border border-gray-500" style="${"background-color: #" + escape(initColor, true)}"></div>
       ${finalColor === null || finalColor === initColor ? `<div class="ring-2 ring-gray-500 absolute top-0 left-0 w-8 h-8 rounded-full"></div>
-        <p class="pt-2 text-xs text-gray-600 absolute w-full text-center">Default
+        <p class="text-xs text-gray-600 absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 whitespace-nowrap overflow-visible">Default
         </p>` : ``}</button></div>
 
   ${each(colors, (color) => {
-    return `<div class="color-container m-3 relative"><button><div class="w-8 h-8 rounded-full border border-gray-500" style="${"background-color: #" + escape(color.code, true)}"></div></button>
+    return `<div class="color-container m-3 relative"><button><div class="w-8 h-8 mb-2 rounded-full border border-gray-500" style="${"background-color: #" + escape(color.code, true)}"></div></button>
       ${finalColor === color.code ? `<div class="ring-2 ring-gray-500 absolute top-0 left-0 w-8 h-8 rounded-full"></div>
-        <p class="text-xs text-gray-600 absolute w-full text-center">${escape(color.name)}
+        <p class="text-xs text-gray-600 absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 whitespace-nowrap overflow-visible">${escape(color.name)}
         </p>` : ``}
     </div>`;
   })}
@@ -144,7 +153,7 @@ const MaterialChoice = create_ssr_component(($$result, $$props, $$bindings, slot
   let carousel;
   $$result.css.add(css$2);
   $$unsubscribe_selectedObjectName();
-  return `<div class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4 pb-5 carousel svelte-cpz1oa"${add_attribute("this", carousel, 0)}>${each(MATERIALS, (material) => {
+  return `<div class="flex flex-nowrap lg:justify-center w-full pb-2 overflow-x-auto px-4 carousel svelte-cpz1oa"${add_attribute("this", carousel, 0)}>${each(MATERIALS, (material) => {
     return `<button class="material-button m-1 flex items-center justify-center text-sm svelte-cpz1oa" style="${"background-image: url(" + escape(material.image, true) + ");"}"><p class="text-white">${escape(material.alt)}</p>
     </button>`;
   })}
@@ -213,7 +222,7 @@ const Loafers = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 });
 const _page_svelte_svelte_type_style_lang = "";
 const css = {
-  code: ".title.svelte-qpe79w{position:fixed;top:4%;left:4%;color:#2b2b2b;font-size:24px;letter-spacing:24px;text-shadow:8px 8px 8px rgba(0, 0, 0, 0.5)}@media screen and (min-width: 768px){.title.svelte-qpe79w{font-size:48px;letter-spacing:48px}}.pallete.svelte-qpe79w{height:80px;position:fixed;bottom:0;z-index:1;transition:height 0.5s ease-in-out}.pallete.expanded.svelte-qpe79w{height:224px}",
+  code: ".title.svelte-16uq0hp{position:fixed;top:4%;left:4%;color:#2b2b2b;font-size:24px;letter-spacing:24px;text-shadow:8px 8px 8px rgba(0, 0, 0, 0.5)}@media screen and (min-width: 768px){.title.svelte-16uq0hp{font-size:48px;letter-spacing:48px}}.pallete.svelte-16uq0hp{height:72px;position:fixed;bottom:0;z-index:1;transition:height 0.5s ease-in-out}.pallete.expanded.svelte-16uq0hp{height:224px}",
   map: null
 };
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -225,11 +234,11 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$result.css.add(css);
   return `${``}
 
-<div class="title svelte-qpe79w">WAGKI</div>
+<div class="title svelte-16uq0hp">WAGKI</div>
 <button class="fixed right-8 top-8 w-24 h-10 text-sm font-bold border text-black bg-white rounded-full">Done</button>
 
 ${validate_component(Loafers, "Loafers").$$render($$result, {}, {}, {})}
-<div class="${["pallete w-full svelte-qpe79w", "expanded"].join(" ").trim()}">${validate_component(ChoiceSection, "ChoiceSection").$$render($$result, {}, {}, {})}
+<div class="${["pallete w-full svelte-16uq0hp", "expanded"].join(" ").trim()}">${validate_component(ChoiceSection, "ChoiceSection").$$render($$result, {}, {}, {})}
 </div>`;
 });
 export {
