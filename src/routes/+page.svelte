@@ -83,7 +83,7 @@
   }
 
   .pallete {
-    height: 80px;
+    height: 72px;
     position: fixed;
     bottom: 0;
     z-index: 1;

@@ -52,21 +52,23 @@
   on:mousemove={drag}
   on:mouseup={stopDrag}
   on:mouseleave={stopDrag}
-  class="flex flex-nowrap lg:justify-center w-full pb-10 overflow-x-auto px-4 carousel"
+  class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4 carousel"
 >
   <div class="color-container m-3 relative">
     <button
       on:click={() => $selectedObjectName && selectedColor.set(initColor)}
     >
       <div
-        class="w-8 h-8 rounded-full border border-gray-500"
+        class="w-8 h-8 mb-3 rounded-full border border-gray-500"
         style="background-color: #{initColor}"
       />
       {#if finalColor === null || finalColor === initColor}
         <div
           class="ring-2 ring-gray-500 absolute top-0 left-0 w-8 h-8 rounded-full"
         />
-        <p class="pt-2 text-xs text-gray-600 absolute w-full text-center">
+        <p
+          class="text-xs text-gray-600 absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 whitespace-nowrap overflow-visible"
+        >
           Default
         </p>
       {/if}
@@ -79,7 +81,7 @@
         on:click={() => $selectedObjectName && selectedColor.set(color.code)}
       >
         <div
-          class="w-8 h-8 rounded-full border border-gray-500"
+          class="w-8 h-8 mb-2 rounded-full border border-gray-500"
           style="background-color: #{color.code}"
         />
       </button>
@@ -87,7 +89,9 @@
         <div
           class="ring-2 ring-gray-500 absolute top-0 left-0 w-8 h-8 rounded-full"
         />
-        <p class="text-xs text-gray-600 absolute w-full text-center">
+        <p
+          class="text-xs text-gray-600 absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 whitespace-nowrap overflow-visible"
+        >
           {color.name}
         </p>
       {/if}

@@ -63,7 +63,7 @@
 <div
   class="flex w-full md:p-5 p-1 text-lg justify-between items-center text-black chosenContainer"
 >
-  <div class="flex md:gap-24 gap-4 w-2/6 md:w-1/4 controlButton">
+  <div class="flex pl-4 md:gap-24 gap-4 w-2/6 md:w-1/4 controlButton">
     <button
       on:click={undoLastChange}
       class="w-9 h-9 rounded-full border-2 border-grey-500 button"
@@ -83,11 +83,12 @@
     <button on:click={() => switchPartAndHover("left")}>
       <img class="w-6" src="/icon/left-arrow.svg" alt="왼쪽" />
     </button>
-    <div class="flex gap-1 md:gap-8">
-      <div class="text-center md:text-lg text-sm">
+
+    <div class="flex items-center gap-8">
+      <div class="text-center md:text-lg text-m">
         {selectedAltName}
       </div>
-      <p class="md:text-base text-xs text-center text-gray-400">
+      <p class="md:text-base text-sm text-center text-gray-400">
         {selectedObjectIndex + 1}/{partsOrder.length}
       </p>
     </div>
@@ -95,7 +96,8 @@
       <img class="w-6" src="/icon/right-arrow.svg" alt="오른쪽" />
     </button>
   </div>
-  <div class="flex md:gap-24 gap-8 md:w-1/4 w-1/6 justify-end sizeControl">
+
+  <div class="flex pr-4 md:gap-24 gap-8 md:w-1/4 w-1/6 justify-end sizeControl">
     <button
       on:click={toggleExpand}
       class="w-9 h-9 rounded-full border-2 border-grey-500 button"
@@ -104,3 +106,9 @@
     </button>
   </div>
 </div>
+
+<style>
+  .chosenContainer {
+    height: 72px;
+  }
+</style>

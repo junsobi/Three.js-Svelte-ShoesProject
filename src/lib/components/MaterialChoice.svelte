@@ -31,7 +31,7 @@
   on:mousemove={drag}
   on:mouseup={stopDrag}
   on:mouseleave={stopDrag}
-  class="flex flex-nowrap lg:justify-center w-full overflow-x-auto px-4 pb-5 carousel"
+  class="flex flex-nowrap lg:justify-center w-full pb-2 overflow-x-auto px-4 carousel"
 >
   {#each materials as material}
     <button
