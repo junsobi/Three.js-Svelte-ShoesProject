@@ -1,5 +1,5 @@
 <script>
-  import { onMount, afterUpdate } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import * as THREE from "three";
   import { initScene } from "./sceneInit.js";
   import { loadGLTFModel } from "./loadGLTFModel.js";
@@ -13,6 +13,7 @@
     orderProgress,
     finalParts,
     initialParts,
+    cameraPosition,
   } from "$lib/store/store";
   import {
     applyHighlightMaterial,
@@ -32,6 +33,10 @@
   let highlightMaterial = null;
   const highlightColor = new THREE.Color("#00FF00");
   let hoverTimeout;
+  let unsubscribe;
+  let targetCameraPosition = new THREE.Vector3(4, 8, 5);
+  let cameraPositionChanged = false;
+  let cameraMoveSpeed = 0.1; // 카메라 이동 속도를 조정할 수 있는 변수
 
   $: {
     if (loafer && $selectedObjectName) {
@@ -204,6 +209,18 @@
 
       renderer.setSize(width, height);
     }
+
+    const unsubscribe = cameraPosition.subscribe(({ x, y, z }) => {
+      targetCameraPosition.set(x, y, z);
+      cameraPositionChanged = true;
+    });
+
+    // unsubscribe = cameraPosition.subscribe(({ x, y, z }) => {
+    //   camera.position.set(x, y, z);
+    //   camera.lookAt(0, 0, 0);
+
+    // });
+
     window.addEventListener("resize", resizeCanvas, false);
     resizeCanvas();
     const resizeObserver = new ResizeObserver(() => {
@@ -272,14 +289,27 @@
 
     document.body.appendChild(renderer.domElement); // 렌더러를 DOM에 추가
 
-    camera.position.set(4, 8, 5);
-    camera.lookAt(0, 0, 0);
-
     function animate() {
       requestAnimationFrame(animate);
       controls.update(); // for damping
       renderer.render(scene, camera);
+
+      if (cameraPositionChanged) {
+        const currentPosition = camera.position.clone();
+        const newPosition = currentPosition.lerp(
+          targetCameraPosition,
+          cameraMoveSpeed
+        );
+        camera.position.copy(newPosition);
+
+        // 이동이 완료되었는지 체크
+        const distance = currentPosition.distanceTo(targetCameraPosition);
+        if (distance < 0.01) {
+          cameraPositionChanged = false;
+        }
+      }
     }
+
     animate();
   });
 </script>

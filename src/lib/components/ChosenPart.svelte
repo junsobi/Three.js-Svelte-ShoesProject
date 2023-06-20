@@ -6,9 +6,11 @@
     selectedMaterial,
     selectedObjectName,
     finalParts,
+    cameraPosition,
   } from "$lib/store/store";
   import ChangeableParts from "./ChangeableParts.svelte";
   import { undoLastChange, redoLastChange } from "./Loafer/undoFunctions";
+  import objectsCameraPosition from "./objectsCameraPosition.js";
 
   const dispatch = createEventDispatcher();
   let showModal = false;
@@ -18,6 +20,7 @@
   let partsOrder = [];
   let isExpanded = true;
   let iconSrc = "/icon/down-arrow.svg";
+  let cameraPositionChanged = false;
 
   finalParts.subscribe((value) => {
     parts = value;
@@ -44,6 +47,8 @@
   function switchPartAndHover(direction) {
     switchPart(direction);
     hoverPart.set(partsOrder[selectedObjectIndex]);
+    cameraPosition.set(objectsCameraPosition[partsOrder[selectedObjectIndex]]);
+    cameraPositionChanged = true;
 
     setTimeout(() => {
       hoverPart.set("");

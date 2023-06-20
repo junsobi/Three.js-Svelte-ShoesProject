@@ -27,3 +27,9 @@ export const finalParts = writable({
   Innersole: { texture: null, color: null, alt: "안쪽솔" },
   Inner_fabric: { texture: null, color: null, alt: "안섬유" },
 });
+
+export const cameraPosition = writable({
+  x: 4,
+  y: 8,
+  z: 5,
+});
