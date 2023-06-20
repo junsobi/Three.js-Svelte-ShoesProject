@@ -204,6 +204,7 @@ const Loafers = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_hoverPart = subscribe(hoverPart, (value) => value);
   let loafer;
   new THREE.Color("#00FF00");
+  new THREE.Vector3(4, 8, 5);
   {
     {
       let applyHighlight = function() {

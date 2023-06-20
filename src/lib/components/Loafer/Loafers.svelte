@@ -116,7 +116,7 @@
   }
 
   $: {
-    if (loafer && $selectedMaterial) {
+    if (loafer && $selectedMaterial && !$hoverPart) {
       const material = MATERIALS.find((m) => m.name === $selectedMaterial);
 
       if (material) {
