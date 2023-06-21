@@ -1,6 +1,15 @@
 import * as THREE from "three";
+import { finalParts } from "$lib/store/store";
+import { updateOrderProgress } from "./undoFunctions.js";
+import { resetHighlightMaterial } from "./highlight.js";
+import { getOldMaterialFromObject } from "./undoFunctions.js";
 
-export function applyTextureToObject(object, textureURL, selectedObjectName) {
+export function applyTextureToObject(
+  object,
+  textureURL,
+  selectedObjectName,
+  selectedMaterial
+) {
   if (!textureURL) {
     object.traverse(function (child) {
       if (child.name === selectedObjectName && child.material) {
@@ -17,9 +26,7 @@ export function applyTextureToObject(object, textureURL, selectedObjectName) {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
       texture.repeat.set(1, 1);
-
-      // 서서히 페이드 아웃하는 효과를 주기 위해 텍스처의 가장자리에 투명도를 적용
-      applyAlphaFadeOut(texture, 0.8); // 페이드 아웃 강도를 조절
+      applyAlphaFadeOut(texture, 0.8);
 
       object.traverse(function (child) {
         if (child.name === selectedObjectName && child.material) {
@@ -27,6 +34,27 @@ export function applyTextureToObject(object, textureURL, selectedObjectName) {
           child.material.needsUpdate = true;
         }
       });
+
+      // 여기서 추가로 기능을 구현
+      resetHighlightMaterial(object);
+      let oldValue = getOldMaterialFromObject(object, selectedObjectName);
+
+      finalParts.update((values) => {
+        return {
+          ...values,
+          [selectedObjectName]: {
+            ...values[selectedObjectName],
+            texture: selectedMaterial,
+          },
+        };
+      });
+
+      updateOrderProgress(
+        "texture",
+        selectedObjectName,
+        oldValue,
+        selectedMaterial
+      );
     },
     undefined,
     function (err) {
@@ -35,7 +63,6 @@ export function applyTextureToObject(object, textureURL, selectedObjectName) {
     }
   );
 }
-
 // 텍스처의 가장자리에 투명도를 적용하여 페이드 아웃하는 함수
 function applyAlphaFadeOut(texture, fadeOutStrength) {
   const canvas = document.createElement("canvas");

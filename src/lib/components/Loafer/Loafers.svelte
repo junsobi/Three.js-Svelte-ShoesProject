@@ -62,27 +62,11 @@
   $: {
     if (loafer && $selectedMaterial && !$hoverPart) {
       const material = MATERIALS.find((m) => m.name === $selectedMaterial);
-
       if (material) {
-        let oldValue = getOldMaterialFromObject(loafer, $selectedObjectName);
-
-        applyTextureToObject(loafer, material.image, $selectedObjectName);
-        resetHighlightMaterial(loafer);
-
-        finalParts.update((values) => {
-          return {
-            ...values,
-            [$selectedObjectName]: {
-              ...values[$selectedObjectName],
-              texture: $selectedMaterial,
-            },
-          };
-        });
-
-        updateOrderProgress(
-          "texture",
+        applyTextureToObject(
+          loafer,
+          material.image,
           $selectedObjectName,
-          oldValue,
           $selectedMaterial
         );
       }
