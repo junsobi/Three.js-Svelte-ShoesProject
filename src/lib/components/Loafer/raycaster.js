@@ -8,8 +8,8 @@ export function setupRaycaster(
   setSelectedObjectName,
   setSelectedColor,
   setSelectedMaterial,
-  setHoverTimeout,
   hoverTimeout,
+  setHoverTimeout,
   controls
 ) {
   function onMouseClick(event) {
@@ -62,6 +62,7 @@ export function setupRaycaster(
             if (hoverTimeout) {
               clearTimeout(hoverTimeout);
             }
+
             setHoverTimeout(
               setTimeout(() => {
                 setHoverPart("");

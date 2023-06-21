@@ -10,31 +10,24 @@
     selectedMaterial,
     selectedObjectName,
     hoverPart,
-    orderProgress,
-    finalParts,
     initialParts,
     cameraPosition,
   } from "$lib/store/store";
   import {
-    resetHighlightMaterial,
     setHighlightOnHover,
     applyHighlight,
     removeHighlight,
   } from "./highlight.js";
-  import {
-    getOldColorFromObject,
-    getOldMaterialFromObject,
-    updateOrderProgress,
-  } from "./undoFunctions.js";
   import { applyColorChange } from "./coloring.js";
   import { applyTextureToObject } from "./texture.js";
-  import { animate } from "./animate.js";
+  import { setupRaycaster } from "./raycaster.js";
+  import { handleResize } from "./resize.js";
 
   let scene, camera, renderer, loafer, controls;
   let highlightMaterial = null;
   const highlightColor = new THREE.Color("#00FF00");
   let hoverTimeout;
-  let unsubscribe;
+  let cameraSubscribe;
   let targetCameraPosition = new THREE.Vector3(4, 8, 5);
   let cameraPositionChanged = false;
   let cameraMoveSpeed = 0.1; // 카메라 이동 속도를 조정할 수 있는 변수
@@ -76,7 +69,6 @@
 
   onMount(() => {
     // scene은 3D 객체를 담는 공간, camera는 환경을 어떻게 볼 것인지 정의, renderer는 3D를 렌더링하는 역할, controls는 카메라 컨트롤러 역할
-
     ({ scene, camera, renderer, controls } = initScene({
       minDistance: 1,
       maxDistance: 20,
@@ -85,40 +77,17 @@
 
     (async () => {
       try {
-        loafer = await loadGLTFModel("/model/loafer/Loafers.glb", scene);
-        loafer.position.x += 0.1;
-        loafer.position.y += 0.1;
-        loafer.rotation.x = 0.2;
+        loafer = await loadGLTFModel(
+          "/model/loafer/Loafers.glb",
+          scene,
+          initialParts
+        );
 
-        loafer.castShadow = true;
-        loafer.traverse(function (child) {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true;
-          }
-
-          if (child.material && child.material.color) {
-            child.userData.originalMaterial = child.material;
-
-            let initialColor = child.material.color.getHexString();
-            initialParts.update((values) => {
-              return {
-                ...values,
-                [child.name]: {
-                  ...values[child.name],
-                  color: initialColor,
-                },
-              };
-            });
-          }
-        });
         loaferData.set(loafer);
         const box = new THREE.Box3().setFromObject(loafer);
         const center = box.getCenter(new THREE.Vector3());
         controls.target.copy(center);
         controls.update();
-
-        window.addEventListener("click", onMouseClick, false);
-        //정확한 클릭을 위해 로퍼모델이 로드되고 위치조정된뒤에 등록
       } catch (error) {
         console.error("Failed to load glb model: ", error);
       }
@@ -127,106 +96,59 @@
     const canvas = document.querySelector("#canvas");
     const choiceSection = document.querySelector(".pallete");
 
-    function resizeCanvas() {
-      const height = window.innerHeight - choiceSection.offsetHeight;
-      const width = window.innerWidth;
-      canvas.style.height = `${height}px`;
-      canvas.style.width = `${width}px`;
+    handleResize({ canvas, choiceSection, camera, renderer });
 
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+    const setHoverTimeout = (timeout) => {
+      hoverTimeout = timeout;
+    };
 
-      renderer.setSize(width, height);
-    }
+    const clearHoverTimeout = () => {
+      if (hoverTimeout) {
+        cleartTimeout(hoverTimeout);
+        hoverTimeout = null;
+      }
+    };
 
-    const unsubscribe = cameraPosition.subscribe(({ x, y, z }) => {
+    setupRaycaster(
+      canvas,
+      camera,
+      scene,
+      hoverPart.set,
+      selectedObjectName.set,
+      selectedColor.set,
+      selectedMaterial.set,
+      hoverTimeout,
+      setHoverTimeout,
+      clearHoverTimeout,
+      controls
+    );
+
+    document.body.appendChild(renderer.domElement); // 렌더러를 DOM에 추가
+
+    const cameraSubscribe = cameraPosition.subscribe(({ x, y, z }) => {
       targetCameraPosition.set(x, y, z);
       cameraPositionChanged = true;
     });
 
-    window.addEventListener("resize", resizeCanvas, false);
-    resizeCanvas();
-    const resizeObserver = new ResizeObserver(() => {
-      // pallete의 크기가 바뀔 때마다 resizeCanvas 함수를 호출
-      resizeCanvas();
-    });
-    resizeObserver.observe(choiceSection);
-    function onMouseClick(event) {
-      // 드래그 중인 경우에는 클릭 이벤트를 처리하지 않음
-      if (controls.isDragging) {
-        return;
-      }
-
-      const canvasHeight = canvas.offsetHeight;
-
-      if (event.clientY > canvasHeight) {
-        return;
-      }
-
-      let raycaster = new THREE.Raycaster();
-      let mouse = new THREE.Vector2();
-
-      let canvasBounds = canvas.getBoundingClientRect();
-
-      mouse.x =
-        ((event.clientX - canvasBounds.left) / canvasBounds.width) * 2 - 1;
-      mouse.y =
-        -((event.clientY - canvasBounds.top) / canvasBounds.height) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-
-      let intersects = raycaster.intersectObjects(scene.children, true);
-
-      if (intersects.length > 1) {
-        let firstIntersection = intersects[0];
-        let selectedObject = firstIntersection.object;
-
-        let objectNameToSelect; // 선택할 객체의 이름을 저장하기 위한 새로운 변수를 선언
-
-        if (selectedObject.material) {
-          if (selectedObject.name !== "Coin") {
-            if (selectedObject.name === "Lion") {
-              objectNameToSelect = "Leather"; // 'Lion' 객체가 클릭되면 'Leather'를 선택하도록 설정
-            } else if (selectedObject.name === "Logo") {
-              objectNameToSelect = "Innersole"; // 'Logo' 객체가 클릭되면 'Innersole'를 선택하도록 설정
-            } else {
-              objectNameToSelect = selectedObject.name; // 그렇지 않으면, 선택한 객체의 이름을 사용
-            }
-            if ($selectedObjectName !== objectNameToSelect) {
-              selectedObjectName.set(objectNameToSelect);
-              selectedColor.set("");
-              selectedMaterial.set("");
-
-              hoverPart.set(objectNameToSelect);
-              if (hoverTimeout) {
-                clearTimeout(hoverTimeout);
-              }
-              hoverTimeout = setTimeout(() => {
-                hoverPart.set("");
-              }, 1600);
-            }
-          }
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update(); // for damping
+      renderer.render(scene, camera);
+      if (cameraPositionChanged) {
+        const currentPosition = camera.position.clone();
+        const newPosition = currentPosition.lerp(
+          targetCameraPosition,
+          cameraMoveSpeed
+        );
+        camera.position.copy(newPosition);
+        // 이동이 완료되었는지 체크
+        const distance = currentPosition.distanceTo(targetCameraPosition);
+        if (distance < 0.01) {
+          cameraPositionChanged = false;
         }
       }
     }
-
-    document.body.appendChild(renderer.domElement); // 렌더러를 DOM에 추가
-
-    const setCameraPositionChanged = (value) => {
-      cameraPositionChanged = value;
-    };
-
-    const loop = animate(
-      scene,
-      camera,
-      controls,
-      renderer,
-      targetCameraPosition,
-      cameraMoveSpeed,
-      cameraPositionChanged,
-      setCameraPositionChanged
-    );
-    requestAnimationFrame(loop);
+    animate();
   });
 </script>
 
