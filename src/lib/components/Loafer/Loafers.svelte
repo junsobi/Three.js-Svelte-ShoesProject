@@ -28,6 +28,7 @@
   } from "./undoFunctions.js";
   import { applyColorChange } from "./coloring.js";
   import { applyTextureToObject } from "./texture.js";
+  import { animate } from "./animate.js";
 
   let scene, camera, renderer, loafer, controls;
   let highlightMaterial = null;
@@ -143,12 +144,6 @@
       cameraPositionChanged = true;
     });
 
-    // unsubscribe = cameraPosition.subscribe(({ x, y, z }) => {
-    //   camera.position.set(x, y, z);
-    //   camera.lookAt(0, 0, 0);
-
-    // });
-
     window.addEventListener("resize", resizeCanvas, false);
     resizeCanvas();
     const resizeObserver = new ResizeObserver(() => {
@@ -217,28 +212,21 @@
 
     document.body.appendChild(renderer.domElement); // 렌더러를 DOM에 추가
 
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update(); // for damping
-      renderer.render(scene, camera);
+    const setCameraPositionChanged = (value) => {
+      cameraPositionChanged = value;
+    };
 
-      if (cameraPositionChanged) {
-        const currentPosition = camera.position.clone();
-        const newPosition = currentPosition.lerp(
-          targetCameraPosition,
-          cameraMoveSpeed
-        );
-        camera.position.copy(newPosition);
-
-        // 이동이 완료되었는지 체크
-        const distance = currentPosition.distanceTo(targetCameraPosition);
-        if (distance < 0.01) {
-          cameraPositionChanged = false;
-        }
-      }
-    }
-
-    animate();
+    const loop = animate(
+      scene,
+      camera,
+      controls,
+      renderer,
+      targetCameraPosition,
+      cameraMoveSpeed,
+      cameraPositionChanged,
+      setCameraPositionChanged
+    );
+    requestAnimationFrame(loop);
   });
 </script>
 
