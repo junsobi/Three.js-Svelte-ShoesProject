@@ -16,17 +16,17 @@
     cameraPosition,
   } from "$lib/store/store";
   import {
-    applyHighlightMaterial,
     resetHighlightMaterial,
-    setHighlightColor,
-    resetHighlightColor,
+    setHighlightOnHover,
+    applyHighlight,
     removeHighlight,
   } from "./highlight.js";
   import {
     getOldColorFromObject,
     getOldMaterialFromObject,
+    updateOrderProgress,
   } from "./undoFunctions.js";
-  import { applyColorToObject } from "./coloring.js";
+  import { applyColorChange } from "./coloring.js";
   import { applyTextureToObject } from "./texture.js";
 
   let scene, camera, renderer, loafer, controls;
@@ -39,80 +39,24 @@
   let cameraMoveSpeed = 0.1; // 카메라 이동 속도를 조정할 수 있는 변수
 
   $: {
-    if (loafer && $selectedObjectName) {
-      hoverPart.set($selectedObjectName);
-
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-      }
-
-      hoverTimeout = setTimeout(() => {
-        hoverPart.set("");
-      }, 1600);
-    }
+    hoverTimeout = setHighlightOnHover(loafer);
   }
 
   $: {
-    function applyHighlight() {
-      if (loafer && $hoverPart) {
-        removeHighlight(loafer, resetHighlightMaterial, resetHighlightColor);
-
-        loafer.traverse(function (child) {
-          if (child.name === $hoverPart) {
-            if (child.material) {
-              if (!highlightMaterial) {
-                highlightMaterial = child.material.clone();
-                highlightMaterial.transparent = true;
-                highlightMaterial.opacity = 0.5;
-                child.userData.originalMaterial = child.material;
-              }
-              applyHighlightMaterial(child, highlightMaterial);
-              setHighlightColor(child, highlightColor);
-            }
-          }
-        });
-      } else {
-        removeHighlight(loafer, resetHighlightMaterial, resetHighlightColor);
-      }
-    }
-    applyHighlight();
-  }
-
-  function updateOrderProgress(type, objectName, oldValue, newValue) {
-    orderProgress.update((progress) => [
-      ...progress,
-      {
-        type: type,
-        objectName: objectName,
-        oldValue: oldValue,
-        newValue: newValue,
-      },
-    ]);
+    $hoverPart
+      ? applyHighlight(loafer, highlightMaterial, highlightColor)
+      : removeHighlight(loafer);
   }
 
   $: {
-    if (loafer && $selectedColor && !$hoverPart) {
-      let oldValue = getOldColorFromObject(loafer, $selectedObjectName);
-      applyColorToObject(loafer, $selectedColor, $selectedObjectName);
-      resetHighlightMaterial(loafer);
-
-      finalParts.update((values) => {
-        return {
-          ...values,
-          [$selectedObjectName]: {
-            ...values[$selectedObjectName],
-            color: $selectedColor,
-          },
-        };
-      });
-
-      updateOrderProgress(
-        "color",
-        $selectedObjectName,
-        oldValue,
-        $selectedColor
-      );
-    }
+    loafer
+      ? applyColorChange(
+          loafer,
+          $selectedColor,
+          $selectedObjectName,
+          $hoverPart
+        )
+      : null;
   }
 
   $: {

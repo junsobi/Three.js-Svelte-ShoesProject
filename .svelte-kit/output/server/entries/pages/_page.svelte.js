@@ -196,12 +196,12 @@ function removeHighlight(loafer) {
 const Loafers = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$unsubscribe_selectedObjectName;
   let $$unsubscribe_selectedMaterial;
-  let $$unsubscribe_selectedColor;
   let $$unsubscribe_hoverPart;
+  let $$unsubscribe_selectedColor;
   $$unsubscribe_selectedObjectName = subscribe(selectedObjectName, (value) => value);
   $$unsubscribe_selectedMaterial = subscribe(selectedMaterial, (value) => value);
-  $$unsubscribe_selectedColor = subscribe(selectedColor, (value) => value);
   $$unsubscribe_hoverPart = subscribe(hoverPart, (value) => value);
+  $$unsubscribe_selectedColor = subscribe(selectedColor, (value) => value);
   let loafer;
   new THREE.Color("#00FF00");
   new THREE.Vector3(4, 8, 5);
@@ -217,8 +217,8 @@ const Loafers = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   }
   $$unsubscribe_selectedObjectName();
   $$unsubscribe_selectedMaterial();
-  $$unsubscribe_selectedColor();
   $$unsubscribe_hoverPart();
+  $$unsubscribe_selectedColor();
   return `<canvas id="canvas"></canvas>`;
 });
 const _page_svelte_svelte_type_style_lang = "";

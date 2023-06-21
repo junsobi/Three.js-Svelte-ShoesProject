@@ -162,3 +162,15 @@ export function getOldMaterialFromObject(object, selectedObjectName) {
 
   return null;
 }
+
+export function updateOrderProgress(type, objectName, oldValue, newValue) {
+  orderProgress.update((progress) => [
+    ...progress,
+    {
+      type: type,
+      objectName: objectName,
+      oldValue: oldValue,
+      newValue: newValue,
+    },
+  ]);
+}
