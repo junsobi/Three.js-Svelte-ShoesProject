@@ -36,7 +36,7 @@
   {#each materials as material}
     <button
       class="material-button m-1 flex items-center justify-center text-sm"
-      style="background-image: url({material.image});"
+      style="background-image: url({material.preview});"
       on:click={() =>
         $selectedObjectName && selectedMaterial.set(material.name)}
     >

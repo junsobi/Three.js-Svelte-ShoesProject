@@ -4,7 +4,7 @@
 
   const getImageUrl = (name) => {
     const material = MATERIALS.find((material) => material.name === name);
-    return material ? material.image : null;
+    return material ? material.preview : null;
   };
 
   const getColor = (part) => {
