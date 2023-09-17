@@ -1,6 +1,6 @@
 
 # 배포 URL
-### http://wagkiproject.s3-website.ap-northeast-2.amazonaws.com/
+### https://three-js-svelte-shoes-project.vercel.app/
 
 
 ## 고객 맞춤 구두 제작 서비스를 제공하기 위한 페이지 구현
