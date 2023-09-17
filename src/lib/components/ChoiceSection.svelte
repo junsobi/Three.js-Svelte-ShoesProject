@@ -2,7 +2,7 @@
   import ChosenPart from "./ChosenPart.svelte";
   import ColorChoice from "./ColorChoice.svelte";
   import ColorMaterialChoice from "./ColorMaterialChoice.svelte";
-  import ControlBox from "./ControlBox.svelte";
+
   import MaterialChoice from "./MaterialChoice.svelte";
   import { createEventDispatcher } from "svelte";
   import ChoosenPart from "./ChosenPart.svelte";

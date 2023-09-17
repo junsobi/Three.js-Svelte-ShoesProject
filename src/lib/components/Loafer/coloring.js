@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { finalParts } from "$lib/store/store";
-import { updateOrderProgress } from "./undoFunctions.js";
-import { getOldColorFromObject } from "./undoFunctions.js";
+import { finalParts, undoing } from "$lib/store/store";
+
 import { resetHighlightMaterial } from "./highlight.js";
+import { logChanges } from "./logChanges.js";
+import { get } from "svelte/store";
 
 export function applyColorToObject(object, color, selectedObjectName) {
   if (object && color) {
@@ -23,20 +24,7 @@ export function applyColorChange(
   hoverPart
 ) {
   if (object && selectedColor && !hoverPart) {
-    let oldValue = getOldColorFromObject(object, selectedObjectName);
     applyColorToObject(object, selectedColor, selectedObjectName);
     resetHighlightMaterial(object);
-
-    finalParts.update((values) => {
-      return {
-        ...values,
-        [selectedObjectName]: {
-          ...values[selectedObjectName],
-          color: selectedColor,
-        },
-      };
-    });
-
-    updateOrderProgress("color", selectedObjectName, oldValue, selectedColor);
   }
 }

@@ -44,14 +44,14 @@
                 <td>{alt}</td>
                 <td>
                   <div class="center-content">
-                    {#if texture}
+                    {#if texture === "leather2"}
+                      <div class="text-center text-gray-500">기본재료</div>
+                    {:else if texture}
                       <img
                         class="w-10 h-10 rounded-full"
                         src={getImageUrl(texture)}
                         {alt}
                       />
-                    {:else}
-                      <div class="text-center text-gray-500">기본재료</div>
                     {/if}
                   </div>
                 </td>

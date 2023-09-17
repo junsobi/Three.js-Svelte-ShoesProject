@@ -12,6 +12,8 @@
     hoverPart,
     initialParts,
     cameraPosition,
+    orderProgress,
+    currentPosition,
   } from "$lib/store/store";
   import {
     setHighlightOnHover,
@@ -22,6 +24,7 @@
   import { applyTextureToObject } from "./texture.js";
   import { setupRaycaster } from "./raycaster.js";
   import { handleResize } from "./resize.js";
+  import { logChanges } from "./logChanges.js";
 
   let scene, camera, renderer, loafer, controls;
   let highlightMaterial = null;
@@ -43,14 +46,16 @@
   }
 
   $: {
-    loafer
-      ? applyColorChange(
-          loafer,
-          $selectedColor,
-          $selectedObjectName,
-          $hoverPart
-        )
-      : null;
+    if (loafer && $selectedColor && !$hoverPart) {
+      const appliedColor = applyColorChange(
+        loafer,
+        $selectedColor,
+        $selectedObjectName,
+        $hoverPart
+      );
+    }
+    console.log($orderProgress);
+    console.log($currentPosition);
   }
 
   $: {
@@ -59,7 +64,7 @@
       if (material) {
         applyTextureToObject(
           loafer,
-          material.image,
+          material.textures,
           $selectedObjectName,
           $selectedMaterial
         );

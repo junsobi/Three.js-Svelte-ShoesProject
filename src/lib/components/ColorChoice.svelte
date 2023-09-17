@@ -6,13 +6,13 @@
     initialParts,
     finalParts,
   } from "$lib/store/store";
+  import { logChanges } from "./Loafer/logChanges";
+  import { get } from "svelte/store";
 
   let part;
   let initColor;
   let finalColor;
-  $: {
-    console.log(finalColor);
-  }
+
   $: {
     part = $selectedObjectName;
     if (part in $initialParts && $initialParts[part].color !== undefined) {
@@ -44,6 +44,7 @@
   function stopDrag(e) {
     isDown = false;
   }
+  console.log(get(finalParts)[get(selectedObjectName)].texture);
 </script>
 
 <div
@@ -78,7 +79,29 @@
   {#each colors as color}
     <div class="color-container m-3 relative">
       <button
-        on:click={() => $selectedObjectName && selectedColor.set(color.code)}
+        on:click={() => {
+          if ($selectedObjectName) {
+            selectedColor.set(color.code);
+
+            finalParts.update((parts) => ({
+              ...parts,
+              [$selectedObjectName]: {
+                ...parts[$selectedObjectName],
+                color: color.code,
+              },
+            }));
+
+            logChanges(
+              "push",
+
+              $selectedObjectName,
+
+              get(finalParts)[get(selectedObjectName)].texture,
+
+              color.code
+            );
+          }
+        }}
       >
         <div
           class="w-8 h-8 mb-2 rounded-full border border-gray-500"

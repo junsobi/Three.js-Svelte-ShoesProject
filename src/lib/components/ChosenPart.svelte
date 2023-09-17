@@ -9,7 +9,8 @@
     cameraPosition,
   } from "$lib/store/store";
   import ChangeableParts from "./ChangeableParts.svelte";
-  import { undoLastChange, redoLastChange } from "./Loafer/undoFunctions";
+
+  import { undoFunction, redoFunction } from "./Loafer/logChanges.js";
   import objectsCameraPosition from "./objectsCameraPosition.js";
 
   const dispatch = createEventDispatcher();
@@ -70,13 +71,13 @@
 >
   <div class="flex pl-2 md:gap-24 gap-4 w-2/6 md:w-1/4 controlButton">
     <button
-      on:click={undoLastChange}
+      on:click={undoFunction}
       class="w-9 h-9 rounded-full border-2 border-grey-500 button"
     >
       <img class="w-6 mx-auto" src="/icon/undo.png" alt="취소" />
     </button>
     <button
-      on:click={redoLastChange}
+      on:click={redoFunction}
       class="w-9 h-9 rounded-full border-2 border-grey-500 button"
     >
       <img class="w-6 mx-auto" src="/icon/redo.png" alt="취소" />

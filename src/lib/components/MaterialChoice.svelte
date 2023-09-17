@@ -1,7 +1,13 @@
 <script>
   import materials from "./MATERIALS";
+  import { logChanges } from "./Loafer/logChanges";
+  import {
+    selectedObjectName,
+    selectedMaterial,
+    finalParts,
+  } from "$lib/store/store";
+  import { get } from "svelte/store";
 
-  import { selectedObjectName, selectedMaterial } from "$lib/store/store";
   let startX, scrollLeft;
   let carousel;
   let isDown = false;
@@ -35,10 +41,28 @@
 >
   {#each materials as material}
     <button
+      on:click={() => {
+        if ($selectedObjectName) {
+          selectedMaterial.set(material.name);
+
+          finalParts.update((parts) => ({
+            ...parts,
+            [$selectedObjectName]: {
+              ...parts[$selectedObjectName],
+              texture: $selectedMaterial,
+            },
+          }));
+
+          logChanges(
+            "push",
+            $selectedObjectName,
+            $selectedMaterial,
+            get(finalParts)[get(selectedObjectName)].color
+          );
+        }
+      }}
       class="material-button m-1 flex items-center justify-center text-sm"
       style="background-image: url({material.preview});"
-      on:click={() =>
-        $selectedObjectName && selectedMaterial.set(material.name)}
     >
       <p class="text-white">{material.alt}</p>
     </button>
